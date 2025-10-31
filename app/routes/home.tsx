@@ -95,9 +95,11 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 						{hours.toString().padStart(2, "0")}:
 						{minutes.toString().padStart(2, "0")}
 					</b>
-					<span className="text-xl inline pr-2">
-						:{seconds.toString().padStart(2, "0")}
-					</span>
+					{loaderData.config.showSeconds && (
+						<span className="text-xl inline pr-2">
+							:{seconds.toString().padStart(2, "0")}
+						</span>
+					)}
 					<br />
 					&mdash; {line}
 				</h1>
@@ -132,16 +134,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 				{taskNow!.status !== -1 && (
 					<UpnextTaskList eventData={loaderData.upcomingEvents} />
 				)}
-				{loaderData.config.nowPlayingTrack &&
-					loaderData.config.nowPlayingArtist && (
-						<div>
-							<p className="text-xl">
-								Now playing:{" "}
-								<b>{loaderData.config.nowPlayingTrack}</b> by{" "}
-								<b>{loaderData.config.nowPlayingArtist}</b>.
-							</p>
-						</div>
-					)}
 				<div className="mt-4">
 					<Link
 						to="/settings"

@@ -14,6 +14,7 @@ export async function loader() {
 			JSON.stringify({
 				currentEvent: null,
 				upcomingEvents: [],
+				error: "No calendar URL configured. Please add your iCal URL in Settings.",
 			}),
 			{
 				status: 200,
@@ -27,11 +28,13 @@ export async function loader() {
 	try {
 		const req = await fetch(calendarUrl);
 		if (!req.ok) {
-			console.error("Failed to fetch calendar:", await req.text());
+			const errorText = await req.text();
+			console.error("Failed to fetch calendar:", errorText);
 			return new Response(
 				JSON.stringify({
 					currentEvent: null,
 					upcomingEvents: [],
+					error: `Failed to fetch calendar: ${req.status} ${req.statusText}. Please check your iCal URL in Settings.`,
 				}),
 				{
 					status: 200,
@@ -112,11 +115,10 @@ export async function loader() {
 			};
 		});
 
-		let currentEvent = null;
-		if (data.length > 0 && data[0].start.valueOf() <= now.valueOf()) {
+		if (data[0].start.valueOf() <= now.valueOf())
 			console.log("Current event:", data[0]);
-			currentEvent = data.shift()!;
-		}
+		const currentEvent =
+			data[0].start.valueOf() <= now.valueOf() ? data.shift()! : null;
 
 		return new Response(
 			JSON.stringify({
@@ -136,6 +138,7 @@ export async function loader() {
 			JSON.stringify({
 				currentEvent: null,
 				upcomingEvents: [],
+				error: `Error processing calendar: ${error instanceof Error ? error.message : "Unknown error"}. Please check your iCal URL in Settings.`,
 			}),
 			{
 				status: 200,

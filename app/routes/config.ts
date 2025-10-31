@@ -36,8 +36,7 @@ export async function action({ request }: Route.ActionArgs) {
 		const validatedUpdates: Partial<{
 			userName: string;
 			calendarUrl: string;
-			nowPlayingTrack: string;
-			nowPlayingArtist: string;
+			showSeconds: boolean;
 		}> = {};
 
 		if ("userName" in updates && typeof updates.userName === "string") {
@@ -50,16 +49,10 @@ export async function action({ request }: Route.ActionArgs) {
 			validatedUpdates.calendarUrl = updates.calendarUrl;
 		}
 		if (
-			"nowPlayingTrack" in updates &&
-			typeof updates.nowPlayingTrack === "string"
+			"showSeconds" in updates &&
+			typeof updates.showSeconds === "boolean"
 		) {
-			validatedUpdates.nowPlayingTrack = updates.nowPlayingTrack;
-		}
-		if (
-			"nowPlayingArtist" in updates &&
-			typeof updates.nowPlayingArtist === "string"
-		) {
-			validatedUpdates.nowPlayingArtist = updates.nowPlayingArtist;
+			validatedUpdates.showSeconds = updates.showSeconds;
 		}
 
 		const newConfig = await updateConfig(validatedUpdates);

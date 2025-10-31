@@ -32,8 +32,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
 			body: JSON.stringify({
 				userName: formData.get("userName"),
 				calendarUrl: formData.get("calendarUrl"),
-				nowPlayingTrack: formData.get("nowPlayingTrack"),
-				nowPlayingArtist: formData.get("nowPlayingArtist"),
+				showSeconds: formData.get("showSeconds") === "on",
 			}),
 		});
 
@@ -111,42 +110,24 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
 
 					<div className="bg-gray-800 p-6 rounded-lg shadow-lg">
 						<h2 className="text-2xl font-semibold mb-4">
-							Now Playing
+							Display Options
 						</h2>
 
 						<div className="space-y-4">
-							<div>
-								<label
-									htmlFor="nowPlayingTrack"
-									className="block text-sm font-medium mb-2"
-								>
-									Track Name
-								</label>
+							<div className="flex items-center">
 								<input
-									type="text"
-									id="nowPlayingTrack"
-									name="nowPlayingTrack"
-									defaultValue={config.nowPlayingTrack}
-									className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-									placeholder="Enter track name"
+									type="checkbox"
+									id="showSeconds"
+									name="showSeconds"
+									defaultChecked={config.showSeconds}
+									className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
 								/>
-							</div>
-
-							<div>
 								<label
-									htmlFor="nowPlayingArtist"
-									className="block text-sm font-medium mb-2"
+									htmlFor="showSeconds"
+									className="ml-2 text-sm font-medium"
 								>
-									Artist Name
+									Show seconds on clock
 								</label>
-								<input
-									type="text"
-									id="nowPlayingArtist"
-									name="nowPlayingArtist"
-									defaultValue={config.nowPlayingArtist}
-									className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-									placeholder="Enter artist name"
-								/>
 							</div>
 						</div>
 					</div>

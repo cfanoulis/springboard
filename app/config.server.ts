@@ -13,16 +13,14 @@ keyv.on("error", (err) => console.error("Keyv connection error:", err));
 export interface Config {
 	userName: string;
 	calendarUrl: string;
-	nowPlayingTrack?: string;
-	nowPlayingArtist?: string;
+	showSeconds: boolean;
 }
 
 // Default configuration values
 const DEFAULT_CONFIG: Config = {
 	userName: "User",
 	calendarUrl: process.env.CAL_URL || "",
-	nowPlayingTrack: "",
-	nowPlayingArtist: "",
+	showSeconds: true,
 };
 
 /**
