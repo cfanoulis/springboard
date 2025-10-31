@@ -112,10 +112,11 @@ export async function loader() {
 			};
 		});
 
-		if (data[0].start.valueOf() <= now.valueOf())
+		let currentEvent = null;
+		if (data.length > 0 && data[0].start.valueOf() <= now.valueOf()) {
 			console.log("Current event:", data[0]);
-		const currentEvent =
-			data[0].start.valueOf() <= now.valueOf() ? data.shift()! : null;
+			currentEvent = data.shift()!;
+		}
 
 		return new Response(
 			JSON.stringify({

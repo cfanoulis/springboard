@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, useLoaderData, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import type { Route } from "./+types/settings";
 import { getConfig } from "~/config.server";
 
@@ -13,31 +13,6 @@ export function meta({}: Route.MetaArgs) {
 export async function loader() {
 	const config = await getConfig();
 	return config;
-}
-
-export async function action({ request }: Route.ActionArgs) {
-	const formData = await request.formData();
-	const updates = {
-		userName: formData.get("userName") as string,
-		calendarUrl: formData.get("calendarUrl") as string,
-		nowPlayingTrack: formData.get("nowPlayingTrack") as string,
-		nowPlayingArtist: formData.get("nowPlayingArtist") as string,
-	};
-
-	// Update config via API
-	const response = await fetch(new URL("/config", request.url).toString(), {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(updates),
-	});
-
-	if (!response.ok) {
-		throw new Error("Failed to update config");
-	}
-
-	return { success: true };
 }
 
 export default function Settings({ loaderData }: Route.ComponentProps) {
@@ -81,7 +56,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
 					</button>
 				</div>
 
-				<Form onSubmit={handleSubmit} className="space-y-6">
+				<form onSubmit={handleSubmit} className="space-y-6">
 					<div className="bg-gray-800 p-6 rounded-lg shadow-lg">
 						<h2 className="text-2xl font-semibold mb-4">
 							Personal Information
@@ -190,7 +165,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
 							Settings saved successfully!
 						</div>
 					)}
-				</Form>
+				</form>
 			</div>
 		</main>
 	);
