@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRevalidator } from "react-router";
 import CalendarEntry from "~/components/CalendarEntry";
 import UpnextTaskList from "~/components/UpnextTaskList";
-import { getLine, type EventData } from "~/util";
+import { getBgClass, getLine, type EventData } from "~/util";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
@@ -77,7 +77,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 	}, [minutes]);
 
 	return (
-		<main className="h-screen flex flex-col items-center justify-center md:flex-row-reverse md:items-center md:justify-center">
+		<main
+			className={`${getBgClass()} h-screen flex flex-col items-center justify-center md:flex-row-reverse md:items-center md:justify-center`}
+		>
 			<div className="md:w-4/10 text-left inline-block">
 				<h1 className="text-xl md:text-6xl flex-row ">
 					Hey <b>Charalampos</b>, it's{" "}

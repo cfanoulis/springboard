@@ -19,7 +19,7 @@ const CalendarEntry: FC<CalendarEntryProps> = ({
 			{summary}
 		</p>
 	) : (
-		<li className="text-md text-gray-400">
+		<li className="text-md text-gray-300">
 			{fmtTime(start)} - {fmtTime(end)}: {summary}
 		</li>
 	);

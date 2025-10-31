@@ -52,6 +52,50 @@ export function getLine() {
 	return "huh, an edge-case? wow";
 }
 
+export function getColor() {
+	const now = new Date();
+	const today = new Date().setHours(0, 0, 0, 0);
+	const moment = now.valueOf() - today;
+
+	if (moment < BREAKPOINTS.morning) {
+		return "#121212";
+	}
+	if (moment >= BREAKPOINTS.morning && moment < BREAKPOINTS.midday)
+		return "#1b2238";
+
+	if (moment >= BREAKPOINTS.midday && moment < BREAKPOINTS.afternoon)
+		return "#3c6c84";
+
+	if (moment >= BREAKPOINTS.afternoon && moment < BREAKPOINTS.evening)
+		return "#30232e";
+
+	if (moment >= BREAKPOINTS.evening) return "#121b27";
+
+	return "#121212";
+}
+
+export function getBgClass() {
+	const now = new Date();
+	const today = new Date().setHours(0, 0, 0, 0);
+	const moment = now.valueOf() - today;
+
+	if (moment < BREAKPOINTS.morning) {
+		return "bg-[#121212]";
+	}
+	if (moment >= BREAKPOINTS.morning && moment < BREAKPOINTS.midday)
+		return "bg-[#1b2238]";
+
+	if (moment >= BREAKPOINTS.midday && moment < BREAKPOINTS.afternoon)
+		return "bg-[#3c6c84]";
+
+	if (moment >= BREAKPOINTS.afternoon && moment < BREAKPOINTS.evening)
+		return "bg-[#30232e]";
+
+	if (moment >= BREAKPOINTS.evening) return "bg-[#121b27]";
+
+	return "bg-[#121212]";
+}
+
 export function fmtTime(date: Date): string {
 	return `${date.getHours().toString().padStart(2, "0")}:${date
 		.getMinutes()

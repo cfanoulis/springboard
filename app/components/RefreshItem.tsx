@@ -4,7 +4,7 @@ import { useRevalidator } from "react-router";
 const RefreshItem: FC = () => {
 	const revalidator = useRevalidator();
 	return (
-		<li className="text-xs text-gray-500 italic">
+		<li className="text-xs text-gray-400 italic">
 			{revalidator.state === "idle" ? (
 				<>
 					something looks off? -{" "}

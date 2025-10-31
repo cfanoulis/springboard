@@ -6,7 +6,7 @@ import type { EventData } from "~/util";
 const UpnextTaskList: FC<{ eventData: EventData[] }> = ({ eventData }) => {
 	return (
 		<>
-			<h2 className="text-lg text-gray-400">Up next:</h2>
+			<h2 className="text-lg text-gray-100">Up next:</h2>
 			<ul>
 				{eventData.map((entry, idx) => (
 					<CalendarEntry

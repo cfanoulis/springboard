@@ -7,6 +7,7 @@ import {
 	ScrollRestoration,
 } from "react-router";
 
+import { getColor } from "~/util";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -32,6 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 					name="viewport"
 					content="width=device-width, initial-scale=1, height=device-height"
 				/>
+				<meta name="theme-color" content={getColor()} />
 				<Meta />
 				<Links />
 			</head>
