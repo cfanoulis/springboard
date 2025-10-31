@@ -1,3 +1,4 @@
+import "dotenv/config";
 import ical from "ical.js";
 
 export async function loader() {
