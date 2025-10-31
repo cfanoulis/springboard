@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useRevalidator } from "react-router";
+import { useRevalidator, Link } from "react-router";
 import CalendarEntry from "~/components/CalendarEntry";
 import UpnextTaskList from "~/components/UpnextTaskList";
 import { getBgClass, getLine, type EventData } from "~/util";
 import type { Route } from "./+types/home";
+import type { Config } from "~/config.server";
 
 export function meta({}: Route.MetaArgs) {
 	return [
@@ -13,13 +14,20 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.LoaderArgs) {
-	const req = await fetch("/cal");
-	if (!req.ok) throw "Failed to fetch calendar data";
+	const [calReq, configReq] = await Promise.all([
+		fetch("/cal"),
+		fetch("/config"),
+	]);
 
-	const data = (await req.json()) as {
+	if (!calReq.ok) throw "Failed to fetch calendar data";
+	if (!configReq.ok) throw "Failed to fetch config";
+
+	const data = (await calReq.json()) as {
 		currentEvent: EventData | null;
 		upcomingEvents: EventData[];
 	};
+
+	const config = (await configReq.json()) as Config;
 
 	data.upcomingEvents = data.upcomingEvents.map((event) => ({
 		...event,
@@ -35,7 +43,7 @@ export async function clientLoader({}: Route.LoaderArgs) {
 		};
 	}
 
-	return data;
+	return { ...data, config };
 }
 
 clientLoader.hydrate = true;
@@ -82,7 +90,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 		>
 			<div className="md:w-4/10 text-left inline-block">
 				<h1 className="text-xl md:text-6xl flex-row ">
-					Hey <b>Charalampos</b>, it's{" "}
+					Hey <b>{loaderData.config.userName}</b>, it's{" "}
 					<b>
 						{hours.toString().padStart(2, "0")}:
 						{minutes.toString().padStart(2, "0")}
@@ -124,10 +132,23 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 				{taskNow!.status !== -1 && (
 					<UpnextTaskList eventData={loaderData.upcomingEvents} />
 				)}
-				<div>
-					<p className="text-xl">
-						Now playing: <b>Alitiki Agapi</b> by <b>Lex, Ortiz</b>.
-					</p>
+				{loaderData.config.nowPlayingTrack &&
+					loaderData.config.nowPlayingArtist && (
+						<div>
+							<p className="text-xl">
+								Now playing:{" "}
+								<b>{loaderData.config.nowPlayingTrack}</b> by{" "}
+								<b>{loaderData.config.nowPlayingArtist}</b>.
+							</p>
+						</div>
+					)}
+				<div className="mt-4">
+					<Link
+						to="/settings"
+						className="text-sm opacity-50 hover:opacity-100 transition"
+					>
+						⚙️ Settings
+					</Link>
 				</div>
 			</div>
 		</main>

@@ -1,8 +1,6 @@
-# Welcome to React Router!
+# Welcome to Springboard!
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+A personal dashboard that helps you spring into action, every day. Built with React Router.
 
 ## Features
 
@@ -12,7 +10,22 @@ A modern, production-ready template for building full-stack React applications u
 - 🔄 Data loading and mutations
 - 🔒 TypeScript by default
 - 🎉 TailwindCSS for styling
+- 📅 Calendar integration (iCal support)
+- ⚙️ Per-install configuration with persistent storage
+- 🎵 "Now Playing" display
 - 📖 [React Router docs](https://reactrouter.com/)
+
+## Configuration
+
+Springboard uses a persistent configuration system powered by Keyv with SQLite backend. Configure your installation by visiting the Settings page at `/settings`.
+
+### Available Settings
+
+- **User Name**: Personalize the greeting with your name
+- **Calendar URL**: Integrate your calendar (iCal URL from Google Calendar, Outlook, etc.)
+- **Now Playing**: Display currently playing music information
+
+Configuration is stored in `config.sqlite` and persists across restarts.
 
 ## Getting Started
 
