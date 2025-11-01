@@ -2,6 +2,7 @@
 .env
 /node_modules/
 .secret/
+.runtime/
 
 # React Router
 /.react-router/
