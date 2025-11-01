@@ -21,6 +21,7 @@ export async function clientLoader({}: Route.LoaderArgs) {
 		upcomingEvents: EventData[];
 	};
 
+	if (!data.upcomingEvents) return { currentEvent: null, upcomingEvents: [] };
 	data.upcomingEvents = data.upcomingEvents.map((event) => ({
 		...event,
 		start: new Date(event.start),
