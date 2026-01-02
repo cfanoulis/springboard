@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react";
-import { useRevalidator } from "react-router";
+import { useNavigate, useRevalidator } from "react-router";
 import CalendarEntry from "~/components/CalendarEntry";
 import UpnextTaskList from "~/components/UpnextTaskList";
 import { getBgClass, getLine, type EventData } from "~/util";
 import type { Route } from "./+types/home";
+
+//todo: move to types file
+interface Config {
+	username: string;
+	calendarUrl: string;
+	showSeconds: boolean;
+}
+interface ManyEventsData {
+	currentEvent: EventData | null;
+	upcomingEvents: EventData[];
+}
+interface LoaderData {
+	config: Config;
+	data: ManyEventsData | { currentEvent: -1; upcomingEvents: -1 };
+}
 
 export function meta({}: Route.MetaArgs) {
 	return [
@@ -13,15 +28,34 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.LoaderArgs) {
-	const req = await fetch("/cal");
-	if (!req.ok) throw "Failed to fetch calendar data";
+	const configStr =
+		localStorage.getItem("sb-config") ??
+		'{"username":"","calendarUrl":"","showSeconds":true}';
 
-	const data = (await req.json()) as {
-		currentEvent: EventData | null;
-		upcomingEvents: EventData[];
+	const config = JSON.parse(configStr) as {
+		username: string;
+		calendarUrl: string;
+		showSeconds: boolean;
 	};
 
-	if (!data.upcomingEvents) return { currentEvent: null, upcomingEvents: [] };
+	const req = await fetch(
+		"/cal?url=" + encodeURIComponent(config.calendarUrl),
+	);
+	if (!req.ok) throw "Failed to fetch calendar data";
+
+	const data = (await req.json()) as
+		| {
+				currentEvent: EventData | null;
+				upcomingEvents: EventData[];
+		  }
+		| { currentEvent: -1; upcomingEvents: -1 };
+
+	if (data.currentEvent === -1 && data.upcomingEvents === -1) {
+		return window.location.replace("/config");
+	}
+
+	if (!data.upcomingEvents)
+		return { config, data: { currentEvent: null, upcomingEvents: [] } };
 	data.upcomingEvents = data.upcomingEvents.map((event) => ({
 		...event,
 		start: new Date(event.start),
@@ -36,12 +70,22 @@ export async function clientLoader({}: Route.LoaderArgs) {
 		};
 	}
 
-	return data;
+	return { config, data } as LoaderData;
 }
 
-clientLoader.hydrate = true;
-
 export default function Home({ loaderData }: Route.ComponentProps) {
+	const { config, data } =
+		JSON.stringify(loaderData) === "{}"
+			? ({
+					config: {
+						username: "",
+						calendarUrl: "",
+						showSeconds: true,
+					},
+					data: { currentEvent: null, upcomingEvents: [] },
+				} as LoaderData)
+			: (loaderData as LoaderData);
+
 	const [minutes, setMinutes] = useState(new Date().getMinutes());
 	const [hours, setHours] = useState(new Date().getHours());
 	const [seconds, setSeconds] = useState(new Date().getSeconds());
@@ -50,12 +94,14 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 		status: number;
 		data?: EventData;
 	}>({ status: -1 });
-
-	const [line, _] = useState(getLine());
+	const [line] = useState(getLine());
 
 	const revalidator = useRevalidator();
+	const nav = useNavigate();
 
 	useEffect(() => {
+		if (!config || data.currentEvent === -1) nav("/config");
+
 		const int = setInterval(() => {
 			const now = new Date();
 			setSeconds(now.getSeconds());
@@ -71,10 +117,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 	}, []);
 
 	useEffect(() => {
-		if (!loaderData.currentEvent && loaderData.upcomingEvents.length === 0)
+		if (!data.currentEvent && data.upcomingEvents.length === 0)
 			return setTaskNow({ status: -1 });
-		if (!loaderData.currentEvent) return setTaskNow({ status: 0 });
-		setTaskNow({ status: 1, data: loaderData.currentEvent });
+		if (!data.currentEvent) return setTaskNow({ status: 0 });
+		setTaskNow({ status: 1, data: data.currentEvent as EventData });
 	}, [minutes]);
 
 	return (
@@ -83,14 +129,16 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 		>
 			<div className="md:w-4/10 text-left inline-block">
 				<h1 className="text-xl md:text-6xl flex-row ">
-					Hey <b>Charalampos</b>, it's{" "}
+					Hey <b>{config.username ?? "friend"}</b>, it's{" "}
 					<b>
 						{hours.toString().padStart(2, "0")}:
 						{minutes.toString().padStart(2, "0")}
 					</b>
-					<span className="text-xl inline pr-2">
-						:{seconds.toString().padStart(2, "0")}
-					</span>
+					{config.showSeconds && (
+						<span className="text-xl inline pr-2">
+							:{seconds.toString().padStart(2, "0")}
+						</span>
+					)}
 					<br />
 					&mdash; {line}
 				</h1>
@@ -123,7 +171,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 					</>
 				)}
 				{taskNow!.status !== -1 && (
-					<UpnextTaskList eventData={loaderData.upcomingEvents} />
+					<UpnextTaskList
+						eventData={data.upcomingEvents as EventData[]}
+					/>
 				)}
 				<div>
 					<p className="text-xl">
