@@ -1,0 +1,11 @@
+{
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"name": "SpringboardDB",
+			"database": "${workspaceFolder:springboard}/.runtime/springboard.sqlite"
+		}
+	],
+	"typescript.tsdk": "node_modules/typescript/lib"
+}
